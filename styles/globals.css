@@ -30,16 +30,12 @@ button.close-button {
     position: absolute;
     top: 0;
     left: 0;
-    height: 2.5px;
-    width: 2.5px;
     background-color: red;
-    color: white;
     border: none;
-    padding: 10px 10px;
+    padding: 6px;
     border-radius: 50px;
     cursor: pointer;
     margin: 10px;
-    content: "x";
 }
 
 .notification {
