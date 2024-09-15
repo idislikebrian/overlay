@@ -1,0 +1,8 @@
+{
+    "build": {
+      "env": {
+        "ELEVENLABS_API_KEY": "@elevenlabs_api_key"
+      }
+    }
+  }
+  
