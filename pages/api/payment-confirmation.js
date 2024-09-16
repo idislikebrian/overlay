@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
         try {
             const audioStream = await client.generate({
-                voice: "Rachel", // or any valid voice ID
+                voice: "hHbFRzG8c6FTY0yE5ELM", // or any valid voice ID
                 model_id: "eleven_turbo_v2",
                 text: textToSpeak
             });
