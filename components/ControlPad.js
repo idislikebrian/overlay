@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
+import io from 'socket.io-client';
 import AudioPlayer from "./AudioPlayer";
 import Notification from './Notification';
+
+let socket;
 
 const ControlPad = () => {
   const [audioQueue, setAudioQueue] = useState([]); 
   const [showNotification, setShowNotification] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    socket = io('process.env.NEXT_PUBLIC_SOCKET_URL');
+  }, []);
 
   const handleFakePayment = async () => {
     const response = await fetch("/api/payment-confirmation", {
@@ -22,13 +29,14 @@ const ControlPad = () => {
 
     if (data.success) {
       const base64Audio = `data:audio/mp3;base64,${data.audio}`;
-      setAudioQueue((prevQueue) => [...prevQueue, base64Audio]);
+      socket.emit('play-audio', { audio: base64Audio });  // Emit event to all connected clients (OBS)
+      setAudioQueue((prevQueue) => [...prevQueue, base64Audio]);  // Add to local queue
     }
   };
 
   const handleShowNotification = () => {
     setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000); // Hide after 3 seconds
+    setTimeout(() => setShowNotification(false), 3000);  // Hide after 3 seconds
   };
 
   const handleHideControlPad = () => {

@@ -1,19 +1,30 @@
 import { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+
+let socket;
 
 const AudioPlayer = ({ audioUrlQueue, setAudioQueue }) => {
     const [currentAudio, setCurrentAudio] = useState(null);
 
-    // Play the next audio when the current one finishes
+    useEffect(() => {
+        socket = io('process.env.NEXT_PUBLIC_SOCKET_URL');
+
+        // Listen for play-audio events from the server
+        socket.on('play-audio', (data) => {
+            setAudioQueue((prevQueue) => [...prevQueue, data.audio]);  // Add the audio to the queue
+        });
+    }, [setAudioQueue]);
+
     useEffect(() => {
         if (!currentAudio && audioUrlQueue.length > 0) {
             const [nextAudio, ...remainingQueue] = audioUrlQueue;
-            setCurrentAudio(nextAudio); // Set next audio to be played
-            setAudioQueue(remainingQueue); // Update the queue, removing the played one
+            setCurrentAudio(nextAudio);  // Set the next audio
+            setAudioQueue(remainingQueue);  // Remove the played audio from the queue
         }
     }, [audioUrlQueue, currentAudio, setAudioQueue]);
 
     const handleAudioEnd = () => {
-        setCurrentAudio(null);
+        setCurrentAudio(null);  // Reset the audio after it finishes
     };
 
     return (
