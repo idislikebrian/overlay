@@ -11,7 +11,7 @@ const ControlPad = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    socket = io('process.env.NEXT_PUBLIC_SOCKET_URL');
+    socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
   }, []);
 
   const handleFakePayment = async () => {

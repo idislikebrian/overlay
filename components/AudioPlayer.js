@@ -7,7 +7,7 @@ const AudioPlayer = ({ audioUrlQueue, setAudioQueue }) => {
     const [currentAudio, setCurrentAudio] = useState(null);
 
     useEffect(() => {
-        socket = io('process.env.NEXT_PUBLIC_SOCKET_URL');
+        socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
 
         // Listen for play-audio events from the server
         socket.on('play-audio', (data) => {
