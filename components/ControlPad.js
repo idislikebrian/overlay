@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from "react";
-import io from 'socket.io-client';
 import AudioPlayer from "./AudioPlayer";
 import Notification from './Notification';
 
-let socket;
-
 const ControlPad = () => {
-  const [audioQueue, setAudioQueue] = useState([]); 
   const [showNotification, setShowNotification] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
-  }, []);
 
   const handleFakePayment = async () => {
     const response = await fetch("/api/payment-confirmation", {
@@ -26,12 +18,6 @@ const ControlPad = () => {
     });
 
     const data = await response.json();
-
-    if (data.success) {
-      const base64Audio = `data:audio/mp3;base64,${data.audio}`;
-      socket.emit('play-audio', { audio: base64Audio });  // Emit event to all connected clients (OBS)
-      setAudioQueue((prevQueue) => [...prevQueue, base64Audio]);  // Add to local queue
-    }
   };
 
   const handleShowNotification = () => {
@@ -63,7 +49,7 @@ const ControlPad = () => {
       <button onClick={handleFakePayment}>Play TTS</button>
       <button onClick={handleShowNotification}>Show Notification</button>
       <button className="close-button" onClick={handleHideControlPad}></button>
-      <AudioPlayer audioUrlQueue={audioQueue} setAudioQueue={setAudioQueue} />
+      <AudioPlayer />
       <Notification message="This is a test notification!" show={showNotification} />
     </div>
   );

@@ -6,7 +6,20 @@ const AudioPlayer = () => {
     const [currentAudio, setCurrentAudio] = useState(null);
 
     useEffect(() => {
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL);
+        const socketServerUrl = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || 'http://localhost:8000';
+        const socket = io(socketServerUrl, {
+            transports: ['websocket'],
+            secure: false,
+            reconnection: true,
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to Socket.io server');
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Socket.io connection error:', err);
+        });
 
         socket.on('play-audio', (data) => {
             setAudioQueue((prevQueue) => [...prevQueue, data.audio]);

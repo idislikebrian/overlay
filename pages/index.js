@@ -1,4 +1,3 @@
-import Head from "next/head";
 import ControlPad from "../components/ControlPad";
 
 export async function getServerSideProps() {
@@ -10,9 +9,6 @@ const Home = ({ audioUrl }) => {
   return (
     <>
       <div>
-        <Head>
-          <link rel="stylesheet" href="/globals.css" />
-        </Head>
         <ControlPad />
       </div>
     </>
