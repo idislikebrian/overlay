@@ -9,28 +9,27 @@ const AudioPlayer = ({ audioUrlQueue, setAudioQueue }) => {
     useEffect(() => {
         socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
 
-        // Listen for play-audio events from the server
         socket.on('play-audio', (data) => {
-            setAudioQueue((prevQueue) => [...prevQueue, data.audio]);  // Add the audio to the queue
+            setAudioQueue((prevQueue) => [...prevQueue, data.audio]);
         });
     }, [setAudioQueue]);
 
     useEffect(() => {
         if (!currentAudio && audioUrlQueue.length > 0) {
             const [nextAudio, ...remainingQueue] = audioUrlQueue;
-            setCurrentAudio(nextAudio);  // Set the next audio
-            setAudioQueue(remainingQueue);  // Remove the played audio from the queue
+            setCurrentAudio(nextAudio); 
+            setAudioQueue(remainingQueue);
         }
     }, [audioUrlQueue, currentAudio, setAudioQueue]);
 
     const handleAudioEnd = () => {
-        setCurrentAudio(null);  // Reset the audio after it finishes
+        setCurrentAudio(null); 
     };
 
     return (
         currentAudio ? (
             <audio autoPlay onEnded={handleAudioEnd} style={{ display: 'none' }}>
-                <source src={currentAudio} type="audio/mp3" />
+                <source src={`data:audio/mp3;base64,${currentAudio}`} type="audio/mp3" />
             </audio>
         ) : null
     );

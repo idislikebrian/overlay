@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
         try {
             const audioStream = await client.generate({
-                voice: "hHbFRzG8c6FTY0yE5ELM", // or any valid voice ID
+                voice: "hHbFRzG8c6FTY0yE5ELM",
                 model_id: "eleven_turbo_v2",
                 text: textToSpeak
             });
@@ -21,8 +21,11 @@ export default async function handler(req, res) {
                 chunks.push(chunk);
             }
             const audioBuffer = Buffer.concat(chunks);
+            const base64Audio = audioBuffer.toString('base64');
 
-            res.status(200).json({ success: true, audio: audioBuffer.toString('base64') });
+            io.emit('play-audio', { audio: base64Audio });
+
+            res.status(200).json({ success: true });
         } catch (error) {
             console.error("Error with TTS streaming:", error);
             res.status(500).json({ error: 'TTS streaming failed', details: error.message });
