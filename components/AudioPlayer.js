@@ -1,35 +1,38 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-let socket;
-
-const AudioPlayer = ({ audioUrlQueue, setAudioQueue }) => {
+const AudioPlayer = () => {
+    const [audioUrlQueue, setAudioQueue] = useState([]);
     const [currentAudio, setCurrentAudio] = useState(null);
 
     useEffect(() => {
-        socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
+        const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL);
 
         socket.on('play-audio', (data) => {
             setAudioQueue((prevQueue) => [...prevQueue, data.audio]);
         });
-    }, [setAudioQueue]);
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         if (!currentAudio && audioUrlQueue.length > 0) {
             const [nextAudio, ...remainingQueue] = audioUrlQueue;
-            setCurrentAudio(nextAudio); 
+            setCurrentAudio(nextAudio);
             setAudioQueue(remainingQueue);
         }
-    }, [audioUrlQueue, currentAudio, setAudioQueue]);
+    }, [audioUrlQueue, currentAudio]);
 
     const handleAudioEnd = () => {
-        setCurrentAudio(null); 
+        setCurrentAudio(null);
     };
 
     return (
         currentAudio ? (
             <audio autoPlay onEnded={handleAudioEnd} style={{ display: 'none' }}>
-                <source src={`data:audio/mp3;base64,${currentAudio}`} type="audio/mp3" />
+                <source src={`data:audio/mpeg;base64,${currentAudio}`} type="audio/mpeg" />
             </audio>
         ) : null
     );
